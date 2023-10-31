@@ -1,6 +1,8 @@
 package com.example.movieappactivity.model
 
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NowPlaying(
     val dates: Dates,
     val page: Int,

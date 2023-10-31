@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieappactivity.data.DataSource
 import com.example.movieappactivity.model.Movie
+import com.example.movieappactivity.repository.MovieDBContainer
 import kotlinx.coroutines.launch
 
 sealed interface MovieDetailUIState {
@@ -23,12 +24,13 @@ class MovieDetailViewModel : ViewModel() {
 
     fun getMovieByID(id: Int){
         viewModelScope.launch {
-            for (temp in DataSource().loadMovie()){
-                if (temp.id == id){
-                    data = temp
-                    break
-                }
-            }
+            data = MovieDBContainer().movieDBRepository.getMovieDetail(id)
+//            for (temp in DataSource().loadMovie()){
+//                if (temp.id == id){
+//                    data = temp
+//                    break
+//                }
+//            }
             movieDetailUIState = MovieDetailUIState.Success(data)
         }
     }

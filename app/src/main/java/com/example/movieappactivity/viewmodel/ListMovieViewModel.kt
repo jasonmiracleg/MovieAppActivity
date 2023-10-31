@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieappactivity.data.DataSource
 import com.example.movieappactivity.model.Movie
+import com.example.movieappactivity.repository.MovieDBContainer
 import kotlinx.coroutines.launch
 
 sealed interface ListMovieUIState { // Creating an Interface
@@ -29,7 +30,7 @@ class ListMovieViewModel :
     private fun loadData() {
         viewModelScope.launch { // Coroutine enables us to regulate the data and run the app simultaneously
             try {
-                data = DataSource().loadMovie()
+                data = MovieDBContainer().movieDBRepository.getAllMovie(1)
                 listMovieUIState = ListMovieUIState.Success(data)
             } catch (e: Exception) {
                 listMovieUIState = ListMovieUIState.Error

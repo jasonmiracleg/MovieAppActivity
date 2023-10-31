@@ -1,5 +1,8 @@
 package com.example.movieappactivity.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class RawMovie(
     val adult: Boolean,
     val backdrop_path: String,

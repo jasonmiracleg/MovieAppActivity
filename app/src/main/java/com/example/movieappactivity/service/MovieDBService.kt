@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface MovieDBService { // Manage the API Services
+interface MovieDBService { // Manage the API Services - use end point
     @GET("now_playing")
     suspend fun getAllMovie( // just search the query instruction from the API docs
         @Query("page") page: Int = 1,
