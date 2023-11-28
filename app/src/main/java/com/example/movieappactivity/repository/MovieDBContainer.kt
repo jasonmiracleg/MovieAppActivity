@@ -7,6 +7,7 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit // Retrieving and uploading data via a REST-based web service
+import retrofit2.converter.gson.GsonConverterFactory
 
 class AuthInterceptor(private val bearerToken: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
@@ -17,7 +18,7 @@ class AuthInterceptor(private val bearerToken: String) : Interceptor {
         return chain.proceed(request)
     }
 }
-class MovieDBContainer { // Accessibility
+class MovieDBContainer { // Accessibility to database from the API - the regulation
 
     companion object{ // Basically like static function
         val BASE_IMG = "https://image.tmdb.org/t/p/w500"
@@ -31,7 +32,8 @@ class MovieDBContainer { // Accessibility
         .build()
 
     private val retrofit =  Retrofit.Builder()
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(GsonConverterFactory.create())
+//        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(BASE_URL)
         .client(client)
         .build()
