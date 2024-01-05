@@ -5,9 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.movieappactivity.data.DataSource
+import com.example.movieappactivity.data.DataStoreManager
 import com.example.movieappactivity.model.Movie
 import com.example.movieappactivity.repository.MovieDBContainer
+import com.example.movieappactivity.repository.MyDBContainer
+import com.example.movieappactivity.ui.ListScreen
 import kotlinx.coroutines.launch
 
 sealed interface ListMovieUIState { // Creating an Interface
@@ -17,9 +21,11 @@ sealed interface ListMovieUIState { // Creating an Interface
 }
 
 class ListMovieViewModel :
-    ViewModel() {// Create the function when the data from the view has to be manipulated logically
+    ViewModel() {
+    // Create the function when the data from the view has to be manipulated logically
     var listMovieUIState: ListMovieUIState by mutableStateOf(ListMovieUIState.Loading)
         private set // Only ListMovieUIState that enables to modify anything, the others wll only be the listeners
+
     // Only the set function is private, whereas the get function may be punblic
     private lateinit var data: List<Movie>
 
@@ -41,5 +47,17 @@ class ListMovieViewModel :
     fun onFavClicked(movie: Movie) {
         movie.isLiked = !movie.isLiked
         // Send the update result to server
+    }
+
+    fun logout(navController: NavController, dataStore: DataStoreManager) {
+        viewModelScope.launch {
+            MyDBContainer().movieDBRepository.logout()
+            dataStore.saveToken("")
+            MyDBContainer.ACCESS_TOKEN = ""
+
+            navController.navigate(ListScreen.Login.name){
+                popUpTo(ListScreen.ListMovie.name){inclusive = true}
+            }
+        }
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,6 +37,7 @@ import androidx.navigation.NavController
 import com.example.movieappactivity.R
 import com.example.movieappactivity.data.DataStoreManager
 import com.example.movieappactivity.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -48,11 +50,11 @@ fun LoginView(
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
-    val isEmailValid by rememberSaveable { mutableStateOf(true) }
-    val isPasswordValid by rememberSaveable { mutableStateOf(true) }
+    var isEmailValid by rememberSaveable { mutableStateOf(true) }
+    var isPasswordValid by rememberSaveable { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
-
+    val context = LocalContext.current
     Scaffold(
         content = {
             Column(
@@ -90,7 +92,18 @@ fun LoginView(
                 )
                 Button(
                     onClick = {
-                        loginViewModel.ButtonLogin()
+                        isEmailValid = isValidEmail(email)
+                        isPasswordValid = isValidPassword(password)
+
+                        if (isEmailValid && isPasswordValid) {
+                            loginViewModel.ButtonLogin(
+                                email,
+                                password,
+                                context,
+                                navController,
+                                dataStore
+                            )
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()

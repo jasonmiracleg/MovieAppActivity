@@ -1,8 +1,12 @@
 package com.example.movieappactivity.ui.view
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,6 +48,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.movieappactivity.R
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
@@ -66,8 +73,15 @@ fun ProfileView() {
     }
     val scope = rememberCoroutineScope()
 
+    var selectedImage by rememberSaveable { mutableStateOf<Uri?>(null) }
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) {
+            selectedImage = it
+        }
+
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         content = {
             Column(
                 Modifier
@@ -76,14 +90,23 @@ fun ProfileView() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_profile),
-                    contentDescription = "Profile Picture",
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(selectedImage)
+                        .crossfade(true).build(), placeholder = painterResource(id = R.drawable.ic_profile), contentDescription = "",
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
                         .border(2.dp, Color.Black, CircleShape)
+                        .clickable { galleryLauncher.launch("image/*") }
                 )
+//                Image(
+//                    painter = painterResource(id = R.drawable.ic_profile),
+//                    contentDescription = "Profile Picture",
+//                    modifier = Modifier
+//                        .size(100.dp)
+//                        .clip(CircleShape)
+//                        .border(2.dp, Color.Black, CircleShape)
+//                )
                 CustomTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -151,7 +174,7 @@ fun ProfileView() {
                         isEmailValid = isValidEmail(email)
                         isPasswordValid = isValidPassword(password)
 
-                        if (isEmailValid && isPasswordValid){
+                        if (isEmailValid && isPasswordValid) {
                             scope.launch {
                                 snackbarHostState.showSnackbar(
                                     "Data $name saved"
@@ -168,7 +191,7 @@ fun ProfileView() {
                     Text(text = "Submit")
                 }
             }
-    }
+        }
     )
 
 }

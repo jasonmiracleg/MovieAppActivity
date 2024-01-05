@@ -57,7 +57,7 @@ fun MovieAppsRoute() {
     Scaffold { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = ListScreen.Login.name,
+            startDestination = ListScreen.Profile.name,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(ListScreen.Login.name) {
@@ -82,7 +82,10 @@ fun MovieAppsRoute() {
                     is ListMovieUIState.Success -> ListMovieView(
                         movieList = status.data,
                         onFavClicked = { movie -> listMovieViewModel.onFavClicked(movie) },
-                        onCardClick = { navController.navigate(ListScreen.MovieDetail.name + "/" + it.id) }
+                        onCardClick = { navController.navigate(ListScreen.MovieDetail.name + "/" + it.id) },
+                        listMovieViewModel,
+                        navController,
+                        dataStore
                     )
 
                     is ListMovieUIState.Error -> {}

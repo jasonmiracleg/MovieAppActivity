@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -38,9 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.movieappactivity.data.DataSource
+import com.example.movieappactivity.data.DataStoreManager
 import com.example.movieappactivity.model.Movie
 import com.example.movieappactivity.repository.MovieDBContainer
 import com.example.movieappactivity.viewmodel.ListMovieUIState
@@ -50,8 +53,16 @@ import com.example.movieappactivity.viewmodel.ListMovieViewModel
 fun ListMovieView(
     movieList: List<Movie>,
     onFavClicked: (Movie) -> Unit,
-    onCardClick: (Movie) -> Unit
+    onCardClick: (Movie) -> Unit,
+    listMovieViewModel: ListMovieViewModel,
+    navController: NavController,
+    dataStore : DataStoreManager
+//    onButtonLogOut: () -> Unit
 ) {
+    Text(text = "List Movie")
+    Button(onClick = { /*onButtonLogOut*/ }) {
+        Text(text = "Log Out")
+    }
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
     ) {
@@ -94,7 +105,8 @@ fun MovieCard(
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(MovieDBContainer.BASE_IMG + movie.poster_path).crossfade(true).build(),
+                        .data(MovieDBContainer.BASE_IMG + movie.poster_path).crossfade(true)
+                        .build(),
                     contentDescription = "First Movie",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -167,17 +179,17 @@ fun MovieCard(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun ListMoviePreview() {
-    val listMovieViewModel: ListMovieViewModel = viewModel()
-    when (val status = listMovieViewModel.listMovieUIState) {
-        is ListMovieUIState.Loading -> {}
-        is ListMovieUIState.Success -> ListMovieView(
-            movieList = status.data,
-            onFavClicked = { movie -> listMovieViewModel.onFavClicked(movie) },
-            {}
-        )
-
-        is ListMovieUIState.Error -> {}
-    }
+//    val listMovieViewModel: ListMovieViewModel = viewModel()
+//    when (val status = listMovieViewModel.listMovieUIState) {
+//        is ListMovieUIState.Loading -> {}
+//        is ListMovieUIState.Success -> ListMovieView(
+//            movieList = status.data,
+//            onFavClicked = { movie -> listMovieViewModel.onFavClicked(movie) },
+//            {}
+//        )
+//
+//        is ListMovieUIState.Error -> {}
+//    }
 //  ListMovieView(DataSource().loadMovie())
 //  MovieCard()
 }
